@@ -1,0 +1,125 @@
+Denotemos por cf as capacidade na rede residual. Temos, então, que:
+
+1) se (u, v) pertence a E e f(u, v) < c(u, v), então cf(u, v) = c(u, v) - f(u, v)
+2) se (u, v) pertence a E e f(u, v) > 0, então cf(v, u) = f(u, v)
+
+Seja P um caminho aumentador. A capacidade residual de P é definida como:
+
+	cf(P) = min { cf(u, v) : (u, v) pertence a P }, onde:
+
+	P+ = { (u, v) pertence a P : (u, v) pertence a E }, e
+
+	P- = { (u, v) pertence a P : (v, u) pertence a E }
+
+Seja alpha = cf(P). Daí:
+			
+	(f | P) = f(u, v) + alpha, se (u, v) pertence a P+,
+	(f | P) = f(u, v) - alpha, se (v, u) pertence a P-, e
+	(f | P) = f(u, v), caso contrário.
+
+Seja, agora, G = (V, E) o grafo que é lido pelo programa. Construamos o grafo G' = (V', E') tal que, V' = V e E' = {(u, v), (v, u)}, para toda aresta (u, v) pertencente a E. Além disso, seja EX uma matriz |V'| x |V'| na qual:
+	EX[i][j] = 0 se a aresta (i, j) não pertence a E, e
+	EX[i][j] = 1 caso contrário.
+
+Seja k o número de interações sobre os grafos. Vamos provar que encontrar um fluxo máximo seguindo as definições acima é equivalente. ao modo como o nosso algoritmo o faz, utilizando o grafo G'.
+
+Base k = 0:
+	No grafo G, f(u, v) = 0 para toda aresta (u, v) pertencente a E, e para a rede residual G0: cf(u, v) = c(u, v) - f(u, v) = c(u, v) e cf(v, u) = 0, pelos critérios 1 e 2.
+	No grafo G', f'(u, v) = 0, para toda aresta (u, v) pertencente a E', e c'(u, v) = cf'(u, v) e c'(v, u) = 0, uma vez que apenas a inicialização foi executada.
+	Logo, para a interação k = 0, o grafo G' corresponde à rede residual G0, e os fluxos nas arestas pertencentes a E no grafo G é igual ao fluxo nas arestas pertencentes a E, no grafo G'. Notemos que E está contido em E'.
+
+H. I. k = n:
+	Para a interação k = n, o grafo G' corresponde à rede residual Gn, e os fluxos nas arestas pertencentes a E no grafo G é igual ao fluxo nas arestas pertencentes a E, no grafo G'.
+
+Passo indutivo k = n + 1:
+	Se não houver um caminho aumentador na n-ésima + 1 interação na rede residual Gn, então, não há um caminho aumentador no grafo G', pois, pela H. I., o grafo G' corresponder à rede residual Gn no início dessa interação; daí os fluxos nas arestas pertencentes a E no grafo G são iguais aos fluxos nas arestas pertencentes a E, no grafo G'; e, ao final da n-ésima + 1 interação, a rede residual Gn+1 corresponde a rede residual Gn, que por sua vez corresponde ao grafo G' da interação anterior, e ao grafo G' dessa interação, visto que não houveram alterações no mesmo. Consequentemente, a hipótese de indução é válida para a interação k = n + 1.
+	
+	Seja f(u, v) o fluxo que passa pela aresta (u, v) pertencente a E no grafo G. Temos que a rede residual Gn é da seguinte forma: 
+		se f(u, v) < c(u, v), então cf(u, v) = c(u, v) - f(u, v) (3), e
+		se f(u, v) > 0, então cf(v, u) = f(u, v) (4).
+
+	Como cf(u, v) = 0 representa que não há uma aresta ligando u a v, então podemos relaxar a restriçã de (3) para:
+		se f(u, v) <= c(u, v), então cf(u, v) = c(u, v) - f(u, v) (5), 
+	e, por conseguinte, podemos relaxar a restrição de (4) para:
+		se f(u, v) >= 0, então cf(v, u) = f(u, v) (6).
+
+	Suponhamos que haja um caminho aumentador na n-ésima + 1 interação na rede residual Gn. Nesse caso, seja P esse caminho, com capacidade residual alpha = cf(P). Pela H. I., o grafo G' corresponde à rede residual Gn no início dessa interação; daí o mesmo caminho P, com a mesma capacidade residual alpha = cf(P) existe no grafo G'.
+	Selecionemos esse caminho em ambos os grafos, e notemos que somente as arestas pertencentes a P são passíveis de sofrerem alterações de capacidade, na rede residual do grafo G e no grafo G', e alterações de fluxo, no grafo G e no grafo G'.
+	No grafo G, para toda aresta (u, v) pertecente ao caminho P, obtemos o novo fluxo da seguinte forma:
+
+		(f | P)(u, v) = f(u, v) + alpha, se (u, v) pertence a P+,
+		(f | P)(u, v) = f(u, v) - alpha, se (v, u) pertence a P-, e
+		(f | P)(u, v) = f(u, v), caso contrário.
+
+	Finalmente, vamos contruir a rede residual Gn+1 da seguinte forma:
+
+	Seja (f | P)(u, v) o fluxo que passa pela aresta (u, v) pertencente a P+ no grafo G, daí:
+		
+		cf(u, v) = c(u, v) - (f | P)(u, v) =  c(u, v) - ( f(u, v) + alpha ), e
+		cf(v, u) = (f | P)(u, v) = f(u, v) + alpha
+
+	Mas a aresta (u, v) pertence a P+, consequentemente, (u, v) pertence a E. Pelo fato de que 0 <= f(u, v) <= c(u, v), então, por (5) e (6): 
+
+		cf(u, v) = c(u, v) - ( f(u, v) + alpha ) = c(u, v) - ( c(u, v) - cf(u, v) + alpha) = cf(u, v) - alpha, e
+		cf(v, u) = f(u, v) + alpha = cf(v, u) + alpha
+
+	Ou seja, se (u, v) pertence a P+, então:
+
+		cf(u, v) = cf(u, v) - alpha, e
+		cf(v, u) = cf(v, u) + alpha
+
+	Seja (f | P)(u, v) o fluxo que passa pela aresta (v, u) pertencente a P- no grafo G, daí:
+
+		cf(u, v) = c(u, v) - (f | P)(u, v) =  c(u, v) - ( f(u, v) - alpha ), e
+		cf(v, u) = (f | P)(u, v) = f(u, v) - alpha
+
+	Mas a aresta (v, u) pertence a P-, consequentemente, a aresta (u, v) pertence a E. Pelo fato de que 0 <= f(u, v) <= c(u, v), então, por (5) e (6):
+
+		cf(u, v) = c(u, v) - ( f(u, v) - alpha ) = c(u, v) - ( c(u, v) - cf(u, v) - alpha) = cf(u, v) + alpha, e
+		cf(v, u) = (f | P)(u, v) = f(u, v) - alpha = cf(v, u) - alpha
+
+	Ou seja, se (u, v) pertence a P-, então:
+
+		cf(u, v) = cf(u, v) + alpha, e
+		cf(v, u) = cf(v, u) - alpha
+
+	Mas se (u, v) pertece a P-, então (v, u) pertencente a E; consequentemente:
+
+		cf(u, v) = cf(u, v) - alpha, e
+		cf(v, u) = cf(v, u) + alpha
+
+	, para (u, v) pertencente a E.
+
+	Finalmente, construir a rede Gn+1 equivale a fazer:
+
+		cf(u, v) = cf(u, v) - alpha, e
+		cf(v, u) = cf(v, u) + alpha
+
+	, para toda aresta (u, v) pertencente a E e que integre o caminho aumentador; e isso é exatamente o que o nosso algoritmo faz. Provamos, portanto, que o grafo resultante G' é equivalente à rede residual Gn+1. 
+
+
+	Seja f'(u, v) o fluxo que passa pela aresta (u, v) pertencente a E no grafo G. Pela H. I., f(u, v) = f'(u, v) para toda aresta (u, v) pertencente a E no início dessa interação. Conforme vimos acima, no grafo G, para toda aresta (u, v) pertecente ao caminho P, obtemos o novo fluxo da seguinte forma:
+
+		(f | P)(u, v) = f(u, v) + alpha, se (u, v) pertence a P+,
+		(f | P)(u, v) = f(u, v) - alpha, se (v, u) pertence a P-, e
+		(f | P)(u, v) = f(u, v), caso contrário.
+
+	Daí, no grafo G', fazemos algo semelhante. A única diferença é que, dada a aresta (u, v) que integre o caminho aumentador, verificamos se (u, v) pertence a E ou não através de uma checagem na matriz EX; consequentemente, se (u, v) pertencer a E, então (u, v) pertence a P+, e daí fazemos:
+
+		(f' | P)(u, v) = f'(u, v) + alpha = f(u, v) + alpha = (f | P)(u, v)
+
+	Caso (u, v) não pertença a E, então (v, u) pertence à E, uma vez que a aresta (u, v) integre o caminho aumentador; daí fazemos:
+
+		(f' | P)(u, v) = f'(u, v) - alpha = f(u, v) + alpha = (f | P)(u, v)
+
+	Caso (u, v) não integre o caminho aumentador, então:
+
+		(f' | P)(u, v) = f'(u, v) = f(u, v) = (f | P)(u, v)
+
+	Provamos, portanto, que os fluxos nas arestas pertencentes a E no grafo G' é igual ao fluxo nas arestas pertencentes a E no grafo G.
+
+	Assim, provamos a validade da H. I. e, consequentemente, o funcionamento do nosso algoritmo.
+
+Análise de complexidade
+
+	O nosso algoritmo encontra cada um dos caminhos aumentadores realizando, para cada um deles, uma BFS no grafo G', partindo do vértice s e com destino ao vértice t. No instante em que o vértice t é alcançado pela primeira vez, o algoritmo retorna o caminho de s à t, que, no caso, é um caminho aumentador com número mínimo de arestas para a interação em questão. Por conta disso, o nosso algoritmo é uma implementação do método de ..., logo a complexidade do mesmo é O(V * E^2).
